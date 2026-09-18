@@ -1,4 +1,3 @@
-```powershell
 # CASB Simulation Script - Cloud Application Access Monitor
 # This script simulates a CASB by monitoring DNS queries and web traffic
 
@@ -121,4 +120,3 @@ foreach ($domain in $CloudServices.Keys) {
 
 
 Write-Host "`nCASB monitoring simulation completed. Check logs at: $LogPath" -ForegroundColor Green
-```
