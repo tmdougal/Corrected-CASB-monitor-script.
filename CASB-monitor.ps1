@@ -1,3 +1,4 @@
+```powershell
 # CASB Simulation Script - Cloud Application Access Monitor
 # This script simulates a CASB by monitoring DNS queries and web traffic
 
@@ -15,11 +16,11 @@ if (-not (Test-Path $LogPath)) {
 
 $CloudServices = @{
     "login.microsoftonline.com" = "Microsoft 365"
-    "accounts.google.com"      = "Google Workspace"
-    "app.dropbox.com"          = "Dropbox"
-    "login.salesforce.com"     = "Salesforce"
-    "slack.com"                = "Slack"
-    "zoom.us"                  = "Zoom"
+    "accounts.google.com"       = "Google Workspace"
+    "app.dropbox.com"           = "Dropbox"
+    "login.salesforce.com"      = "Salesforce"
+    "slack.com"                 = "Slack"
+    "zoom.us"                   = "Zoom"
 }
 
 
@@ -33,7 +34,8 @@ function Log-CloudAccess {
         [string]$Action
     )
 
-    $LogEntry = @{
+    # Create a custom object for the log entry
+    $LogEntry = [PSCustomObject]@{
         Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
         Service   = $Service
         Domain    = $Domain
@@ -44,6 +46,7 @@ function Log-CloudAccess {
 
     $LogFile = "$LogPath\CASB_Access_Log.csv"
 
+    # Export the log entry as a readable CSV
     $LogEntry | Export-Csv -Path $LogFile -Append -NoTypeInformation
 
     Write-Host "CASB Alert: $Action to $Service detected for user $User" -ForegroundColor Yellow
@@ -63,17 +66,20 @@ function Check-PolicyCompliance {
     $ComplianceStatus = "Compliant"
     $RiskLevel = "Low"
 
+
     # Example policy:
     # Block access to personal cloud storage during business hours
 
     $CurrentHour = (Get-Date).Hour
 
     if ($Service -eq "Dropbox" -and $CurrentHour -ge 9 -and $CurrentHour -le 17) {
+
         $ComplianceStatus = "Policy Violation"
         $RiskLevel = "High"
 
         Write-Host "CASB Policy Violation: Personal cloud storage access blocked during business hours" -ForegroundColor Red
     }
+
 
     return @{
         Compliance = $ComplianceStatus
@@ -97,18 +103,22 @@ foreach ($domain in $CloudServices.Keys) {
 
     $user = "ADATUM\Administrator"
 
+
     Log-CloudAccess `
         -Service $service `
         -Domain $domain `
         -User $user `
         -Action "Login Attempt"
 
+
     $compliance = Check-PolicyCompliance `
         -Service $service `
         -User $user
+
 
     Write-Host "Service: $service | Compliance: $($compliance.Compliance) | Risk: $($compliance.Risk)" -ForegroundColor White
 }
 
 
 Write-Host "`nCASB monitoring simulation completed. Check logs at: $LogPath" -ForegroundColor Green
+```
